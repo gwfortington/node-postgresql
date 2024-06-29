@@ -1,6 +1,6 @@
 import { Pool, QueryResult as Result } from 'pg';
 
-interface Config {
+export interface Config {
   host: string;
   port: number;
   user: string;
@@ -14,11 +14,7 @@ export const createConnection = (config: Config) => {
   pool = new Pool(config);
 };
 
-export { Config };
-
-type Query = (text: string, values?: any[]) => Promise<Result>;
-
-export { Query };
+export type Query = (text: string, values?: any[]) => Promise<Result>;
 
 export const query: Query = async (text, values) =>
   await pool.query(text, values);
