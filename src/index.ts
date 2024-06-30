@@ -1,6 +1,6 @@
 import { Pool, QueryResult as Result } from 'pg';
 
-export interface Config {
+interface Config {
   host: string;
   port: number;
   user: string;
@@ -10,20 +10,15 @@ export interface Config {
 
 let pool: Pool;
 
-export const createConnection = (config: Config) => {
+const createConnection = (config: Config) => {
   pool = new Pool(config);
 };
 
-export type Query = (text: string, values?: any[]) => Promise<Result>;
+type Query = (text: string, values?: any[]) => Promise<Result>;
 
-export const query: Query = async (text, values) =>
-  await pool.query(text, values);
+const query: Query = async (text, values) => await pool.query(text, values);
 
-export { Result };
-
-export const transaction = async (
-  callback: (query: Query) => Promise<void>
-) => {
+const transaction = async (callback: (query: Query) => Promise<void>) => {
   const client = await pool.connect();
 
   try {
@@ -37,3 +32,5 @@ export const transaction = async (
     client.release();
   }
 };
+
+export { Config, createConnection, query, transaction };
