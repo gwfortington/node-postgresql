@@ -1,13 +1,13 @@
 import { QueryResult as Result } from 'pg';
-interface Config {
+export interface Config {
     host: string;
     port: number;
     user: string;
     password: string;
     database: string;
 }
-declare const createConnection: (config: Config) => void;
-type Query = (text: string, values?: any[]) => Promise<Result>;
-declare const query: Query;
-declare const transaction: (callback: (query: Query) => Promise<void>) => Promise<void>;
-export { Config, createConnection, query, transaction };
+export declare const createConnection: (config: Config) => void;
+export type Query = (text: string, values?: any[]) => Promise<Result>;
+export { Result };
+export declare const query: Query;
+export declare const transaction: (callback: (query: Query) => Promise<void>) => Promise<void>;
