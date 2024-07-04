@@ -10,7 +10,7 @@ export interface Config {
 
 let pool: Pool;
 
-export const createConnection = (config: Config) => {
+export const createConnectionPool = (config: Config) => {
   pool = new Pool(config);
 };
 

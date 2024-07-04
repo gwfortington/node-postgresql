@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.transaction = exports.query = exports.createConnection = void 0;
+exports.transaction = exports.query = exports.createConnectionPool = void 0;
 const pg_1 = require("pg");
 let pool;
-const createConnection = (config) => {
+const createConnectionPool = (config) => {
     pool = new pg_1.Pool(config);
 };
-exports.createConnection = createConnection;
+exports.createConnectionPool = createConnectionPool;
 const query = (text, values) => __awaiter(void 0, void 0, void 0, function* () { return yield pool.query(text, values); });
 exports.query = query;
 const transaction = (callback) => __awaiter(void 0, void 0, void 0, function* () {
