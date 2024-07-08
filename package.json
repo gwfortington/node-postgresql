@@ -4,7 +4,7 @@
   "description": "PostgreSQL Database Interface",
   "author": "Grant Fortington",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
