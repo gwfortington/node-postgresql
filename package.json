@@ -1,5 +1,5 @@
 {
-  "name": "private-postgresql",
+  "name": "node-postgresql",
   "version": "1.0.0",
   "description": "PostgreSQL Database Interface",
   "author": "Grant Fortington",
