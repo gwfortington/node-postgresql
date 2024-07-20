@@ -14,7 +14,7 @@ export const createConnectionPool = (config: Config) => {
   pool = new Pool(config);
 };
 
-type Query = (text: string, values?: any[]) => Promise<QueryResult>;
+export type Query = (text: string, values?: any[]) => Promise<QueryResult>;
 
 export const query: Query = async (text, values) =>
   await pool.query(text, values);
