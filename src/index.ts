@@ -20,7 +20,7 @@ export const query: Query = async (text, values) =>
   await pool.query(text, values);
 
 export const transaction = async (
-  callback: (query: Query) => Promise<void>
+  callback: (query: Query) => Promise<void>,
 ) => {
   const client = await pool.connect();
 
