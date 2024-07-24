@@ -6,8 +6,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "npm run clean && tsc",
-    "clean": "rimraf dist",
+    "build": "rimraf dist && tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "rimraf --glob \"test/**/*.d.ts\" \"test/**/*.js\" && tsc -p tsconfig-test.json && node --env-file .test.env --test"
