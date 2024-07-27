@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.transaction = exports.query = exports.createConnectionPool = void 0;
+exports.types = exports.transaction = exports.query = exports.createConnectionPool = void 0;
 const pg_1 = require("pg");
+Object.defineProperty(exports, "types", { enumerable: true, get: function () { return pg_1.types; } });
 let pool;
 const createConnectionPool = (config) => {
     pool = new pg_1.Pool(config);
