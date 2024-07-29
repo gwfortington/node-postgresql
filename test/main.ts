@@ -62,7 +62,7 @@ describe('main', () => {
         `UPDATE ${table} SET _integer = 2147483647 WHERE name = 'integer'`,
       );
       await query(
-        `UPDATE ${table} SET _bigint = 900719925474099 WHERE name = 'bigint'`,
+        `UPDATE ${table} SET _bigint = 9007199254740991 WHERE name = 'bigint'`,
       ); // using js MAX_SAFE_INTEGER in lieu of pg max. 9223372036854775807
       await query(
         `UPDATE ${table} SET _decimal = 99999999.99 WHERE name = 'decimal'`,
