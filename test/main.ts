@@ -17,7 +17,7 @@ describe('main', () => {
     await pg.transaction(async (query) => {
       await query(
         `CREATE TABLE ${table} (` +
-          'id serial,' + // serial is shorthand for creating an autoincrementing integer
+          'id serial,' + // serial is shorthand for autoincrementing integer
           'name varchar(30) NOT NULL,' +
           'description text,' + // text w/chk constraint is equiv. to varchar(255)
           '_text text,' +
