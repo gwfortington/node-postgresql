@@ -17,26 +17,27 @@ describe('main', () => {
     await pg.transaction(async (query) => {
       await query(
         `CREATE TABLE ${table} (` +
-          'id serial,' + // serial is shorthand for autoincrementing integer
-          'name varchar(30) NOT NULL,' +
-          'description text,' + // text w/chk constraint is equiv. to varchar(255)
-          '_text text,' +
-          '_smallint smallint,' +
-          '_integer integer,' +
-          '_bigint bigint,' +
-          '_decimal decimal(10, 2),' + // decimal is alias for numeric
-          '_date date,' +
-          '_time time,' +
-          '_datetime timestamp,' +
-          '_datetimetz timestamptz,' +
-          '_boolean boolean,' +
-          `CONSTRAINT ${table}_id_pk PRIMARY KEY (id),` +
-          `CONSTRAINT ${table}_name_uk UNIQUE (name),` +
-          `CONSTRAINT ${table}_description_chk CHECK (char_length(description) <= 255)` +
+          'id serial, ' + // serial is shorthand for autoincrementing integer
+          'name varchar(30) NOT NULL, ' +
+          'description varchar(255), ' +
+          '_varchar varchar(10), ' +
+          '_text text, ' +
+          '_smallint smallint, ' +
+          '_integer integer, ' +
+          '_bigint bigint, ' +
+          '_decimal decimal(10, 2), ' + // decimal is alias for numeric
+          '_date date, ' +
+          '_time time, ' +
+          '_datetime timestamp, ' +
+          '_datetimetz timestamptz, ' +
+          '_boolean boolean, ' +
+          `CONSTRAINT ${table}_id_pk PRIMARY KEY (id), ` +
+          `CONSTRAINT ${table}_name_uk UNIQUE (name)` +
           ')',
       );
       await query(
         `INSERT INTO ${table} (name, description) VALUES ` +
+          "('varchar', 'variable-length with limit'), " +
           "('text', 'variable unlimited length'), " +
           "('smallint', 'small-range integer'), " +
           "('integer', 'typical choice for integer'), " +
@@ -49,7 +50,10 @@ describe('main', () => {
           "('boolean', 'state of true or false')",
       );
       await query(
-        `UPDATE ${table} SET _text = 'Up to 65,535 bytes' WHERE name = 'text'`,
+        `UPDATE ${table} SET _varchar = 'n=10' WHERE name = 'varchar'`,
+      );
+      await query(
+        `UPDATE ${table} SET _text = 'up to 65,535 bytes' WHERE name = 'text'`,
       );
       await query(
         `UPDATE ${table} SET _smallint = 32767 WHERE name = 'smallint'`,
@@ -86,10 +90,10 @@ describe('main', () => {
     pg.types.setTypeParser(pg.types.builtins.TIMESTAMP, datetimeParser); // datetime
     pg.types.setTypeParser(pg.types.builtins.TIMESTAMPTZ, datetimeParser); // datetimetz
   });
-  it('should select 10 rows', async () => {
+  it('should select 11 rows', async () => {
     const result = await pg.query(`SELECT * FROM ${table}`);
     console.log(result.rows);
-    assert.equal(result.rowCount, 10);
+    assert.equal(result.rowCount, 11);
   });
   after(async () => {
     await pg.query(`DROP TABLE ${table}`);
