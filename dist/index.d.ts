@@ -6,12 +6,13 @@ interface Config {
     password: string;
     database: string;
 }
+type Query = (text: string, values?: any[]) => Promise<QueryResult>;
 declare class PostgreSQL {
     #private;
     private constructor();
     static getInstance(config: Config): PostgreSQL;
     query(text: string, values?: any[]): Promise<QueryResult>;
     shutdown(): Promise<void>;
-    transaction(callback: (query: (text: string, values?: any[]) => Promise<QueryResult>) => Promise<void>): Promise<void>;
+    transaction(callback: (query: Query) => Promise<void>): Promise<void>;
 }
-export { Config, PostgreSQL, types };
+export { Config, PostgreSQL, Query, types };

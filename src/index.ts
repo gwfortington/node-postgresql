@@ -8,6 +8,8 @@ interface Config {
   database: string;
 }
 
+type Query = (text: string, values?: any[]) => Promise<QueryResult>;
+
 class PostgreSQL {
   static #instance: PostgreSQL;
   #pool: Pool;
@@ -31,11 +33,7 @@ class PostgreSQL {
     await this.#pool.end();
   }
 
-  async transaction(
-    callback: (
-      query: (text: string, values?: any[]) => Promise<QueryResult>,
-    ) => Promise<void>,
-  ) {
+  async transaction(callback: (query: Query) => Promise<void>) {
     const client = await this.#pool.connect();
     try {
       await client.query('BEGIN');
@@ -50,4 +48,4 @@ class PostgreSQL {
   }
 }
 
-export { Config, PostgreSQL, types };
+export { Config, PostgreSQL, Query, types };
