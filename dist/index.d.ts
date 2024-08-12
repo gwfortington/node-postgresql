@@ -6,8 +6,12 @@ interface Config {
     password: string;
     database: string;
 }
-declare const createConnectionPool: (config: Config) => void;
-type Query = (text: string, values?: any[]) => Promise<QueryResult>;
-declare const query: Query;
-declare const transaction: (callback: (query: Query) => Promise<void>) => Promise<void>;
-export { Config, createConnectionPool, Query, query, transaction, types };
+declare class PostgreSQL {
+    #private;
+    private constructor();
+    static getInstance(config: Config): PostgreSQL;
+    query(text: string, values?: any[]): Promise<QueryResult>;
+    transaction(callback: (query: (text: string, values?: any[]) => Promise<QueryResult>) => Promise<void>): Promise<void>;
+    shutdown(): Promise<void>;
+}
+export { Config, PostgreSQL, types };

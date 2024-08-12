@@ -1,20 +1,27 @@
-import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
-import * as pg from '../dist';
+import assert from 'node:assert/strict';
 
-describe('main', () => {
-  const table = `_test_${new Date().getTime()}`;
+import { Debug, MessageType } from 'node-debug';
+import { Config, PostgreSQL, types } from '../dist';
+
+describe('main', (suiteContext) => {
+  Debug.initialise(false);
+  let debug: Debug;
+  let postgreSQL: PostgreSQL;
+  const table = `_test_${Math.random().toString().substring(2)}`;
   before(async () => {
+    debug = new Debug(`${suiteContext.name}.before`);
+    debug.write(MessageType.Entry);
     const port = Number(process.env.POSTGRESQL_PORT || 'default');
-    const config: pg.Config = {
+    const config: Config = {
       host: process.env.POSTGRESQL_HOST || 'localhost',
       port: isNaN(port) ? 5432 : port,
       user: process.env.POSTGRESQL_USER!,
       password: process.env.POSTGRESQL_PASSWORD!,
       database: process.env.POSTGRESQL_DATABASE!,
     };
-    pg.createConnectionPool(config);
-    await pg.transaction(async (query) => {
+    postgreSQL = PostgreSQL.getInstance(config);
+    await postgreSQL.transaction(async (query) => {
       await query(
         `CREATE TABLE ${table} (` +
           'id serial, ' + // serial is shorthand for autoincrementing integer
@@ -81,21 +88,30 @@ describe('main', () => {
       );
       await query(`UPDATE ${table} SET _boolean = true WHERE name = 'boolean'`);
     });
-    pg.types.setTypeParser(pg.types.builtins.INT8, (value) => parseInt(value)); // bigint
-    pg.types.setTypeParser(pg.types.builtins.NUMERIC, (value) =>
-      parseFloat(value),
-    ); // decimal
-    pg.types.setTypeParser(pg.types.builtins.DATE, (value) => value); // date
+    types.setTypeParser(types.builtins.INT8, (value) => parseInt(value)); // bigint
+    types.setTypeParser(types.builtins.NUMERIC, (value) => parseFloat(value)); // decimal
+    types.setTypeParser(types.builtins.DATE, (value) => value); // date
     const datetimeParser = (value: string) => value.replace(' ', 'T');
-    pg.types.setTypeParser(pg.types.builtins.TIMESTAMP, datetimeParser); // datetime
-    pg.types.setTypeParser(pg.types.builtins.TIMESTAMPTZ, datetimeParser); // datetimetz
+    types.setTypeParser(types.builtins.TIMESTAMP, datetimeParser); // datetime
+    types.setTypeParser(types.builtins.TIMESTAMPTZ, datetimeParser); // datetimetz
+    debug.write(MessageType.Exit);
   });
-  it('should select 11 rows', async () => {
-    const result = await pg.query(`SELECT * FROM ${table}`);
-    console.log(result.rows);
+  it('selecting 11 rows', async (testContext) => {
+    debug = new Debug(`${suiteContext.name}.test.${testContext.name}`);
+    debug.write(MessageType.Entry);
+    debug.write(MessageType.Step, `Selecting from table "${table}"...`);
+    const result = await postgreSQL.query(`SELECT * FROM ${table}`);
+    debug.write(MessageType.Value, JSON.stringify(result.rows));
     assert.equal(result.rowCount, 11);
+    debug.write(MessageType.Exit);
   });
   after(async () => {
-    await pg.query(`DROP TABLE ${table}`);
+    debug = new Debug(`${suiteContext.name}.after`);
+    debug.write(MessageType.Entry);
+    debug.write(MessageType.Step, `Dropping table "${table}"...`);
+    await postgreSQL.query(`DROP TABLE ${table}`);
+    debug.write(MessageType.Step, `Shutting down...`);
+    await postgreSQL.shutdown();
+    debug.write(MessageType.Exit);
   });
 });
