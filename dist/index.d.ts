@@ -1,18 +1,14 @@
 import { QueryResult, types } from 'pg';
-interface Config {
+export interface Config {
     host: string;
     port: number;
     user: string;
     password: string;
     database: string;
 }
-type Query = (text: string, values?: any[]) => Promise<QueryResult>;
-declare class PostgreSQL {
-    #private;
-    private constructor();
-    static getInstance(config: Config): PostgreSQL;
-    query(text: string, values?: any[]): Promise<QueryResult>;
-    shutdown(): Promise<void>;
-    transaction(callback: (query: Query) => Promise<void>): Promise<void>;
-}
-export { Config, PostgreSQL, Query, types };
+export declare const createConnectionPool: (config: Config) => void;
+export type Query = (text: string, values?: any[]) => Promise<QueryResult>;
+export declare const query: Query;
+export declare const transaction: (callback: (query: Query) => Promise<void>) => Promise<void>;
+export declare const shutdown: () => Promise<void>;
+export { types };

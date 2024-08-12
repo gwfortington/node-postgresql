@@ -1,6 +1,6 @@
 import { Pool, QueryResult, types } from 'pg';
 
-interface Config {
+export interface Config {
   host: string;
   port: number;
   user: string;
@@ -8,44 +8,35 @@ interface Config {
   database: string;
 }
 
-type Query = (text: string, values?: any[]) => Promise<QueryResult>;
+let pool: Pool;
 
-class PostgreSQL {
-  static #instance: PostgreSQL;
-  #pool: Pool;
+export const createConnectionPool = (config: Config) => {
+  pool = new Pool(config);
+};
 
-  private constructor(config: Config) {
-    this.#pool = new Pool(config);
+export type Query = (text: string, values?: any[]) => Promise<QueryResult>;
+
+export const query: Query = async (text, values) =>
+  await pool.query(text, values);
+
+export const transaction = async (
+  callback: (query: Query) => Promise<void>,
+) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await callback(async (text, values) => await client.query(text, values));
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
   }
+};
 
-  static getInstance(config: Config) {
-    if (!this.#instance) {
-      this.#instance = new PostgreSQL(config);
-    }
-    return this.#instance;
-  }
+export const shutdown = async () => {
+  await pool.end();
+};
 
-  async query(text: string, values?: any[]): Promise<QueryResult> {
-    return await this.#pool.query(text, values);
-  }
-
-  async shutdown() {
-    await this.#pool.end();
-  }
-
-  async transaction(callback: (query: Query) => Promise<void>) {
-    const client = await this.#pool.connect();
-    try {
-      await client.query('BEGIN');
-      await callback(async (text, values) => await client.query(text, values));
-      await client.query('COMMIT');
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
-  }
-}
-
-export { Config, PostgreSQL, Query, types };
+export { types };
