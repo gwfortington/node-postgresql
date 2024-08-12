@@ -27,6 +27,10 @@ class PostgreSQL {
     return await this.#pool.query(text, values);
   }
 
+  async shutdown() {
+    await this.#pool.end();
+  }
+
   async transaction(
     callback: (
       query: (text: string, values?: any[]) => Promise<QueryResult>,
@@ -43,10 +47,6 @@ class PostgreSQL {
     } finally {
       client.release();
     }
-  }
-
-  async shutdown() {
-    await this.#pool.end();
   }
 }
 

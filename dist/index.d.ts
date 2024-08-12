@@ -11,7 +11,7 @@ declare class PostgreSQL {
     private constructor();
     static getInstance(config: Config): PostgreSQL;
     query(text: string, values?: any[]): Promise<QueryResult>;
-    transaction(callback: (query: (text: string, values?: any[]) => Promise<QueryResult>) => Promise<void>): Promise<void>;
     shutdown(): Promise<void>;
+    transaction(callback: (query: (text: string, values?: any[]) => Promise<QueryResult>) => Promise<void>): Promise<void>;
 }
 export { Config, PostgreSQL, types };

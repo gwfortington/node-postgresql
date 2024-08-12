@@ -40,6 +40,11 @@ class PostgreSQL {
             return yield __classPrivateFieldGet(this, _PostgreSQL_pool, "f").query(text, values);
         });
     }
+    shutdown() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield __classPrivateFieldGet(this, _PostgreSQL_pool, "f").end();
+        });
+    }
     transaction(callback) {
         return __awaiter(this, void 0, void 0, function* () {
             const client = yield __classPrivateFieldGet(this, _PostgreSQL_pool, "f").connect();
@@ -55,11 +60,6 @@ class PostgreSQL {
             finally {
                 client.release();
             }
-        });
-    }
-    shutdown() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield __classPrivateFieldGet(this, _PostgreSQL_pool, "f").end();
         });
     }
 }
