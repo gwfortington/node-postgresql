@@ -14,7 +14,7 @@ import {
 describe('main', (suiteContext) => {
   Debug.initialise(true);
   let debug: Debug;
-  const table = `_test_${Math.random().toString().substring(2)}`;
+  const tableName = `_test_${Math.random().toString().substring(2)}`;
   before(async () => {
     debug = new Debug(`${suiteContext.name}.before`);
     debug.write(MessageType.Entry);
@@ -30,9 +30,9 @@ describe('main', (suiteContext) => {
     debug.write(MessageType.Step, 'Creating connection pool...');
     createConnectionPool(config);
     await transaction(async (query) => {
-      debug.write(MessageType.Step, `Creating temp table "${table}"...`);
+      debug.write(MessageType.Step, `Creating temp table "${tableName}"...`);
       await query(
-        `CREATE TABLE ${table} (` +
+        `CREATE TABLE ${tableName} (` +
           'id serial, ' + // serial is shorthand for autoincrementing integer
           'name varchar(30) NOT NULL, ' +
           'description varchar(255), ' +
@@ -47,16 +47,16 @@ describe('main', (suiteContext) => {
           '_timestamp timestamp, ' +
           '_timestamptz timestamptz, ' +
           '_boolean boolean, ' +
-          `CONSTRAINT ${table}_pk PRIMARY KEY (id), ` +
-          `CONSTRAINT ${table}_uk UNIQUE (name)` +
+          `CONSTRAINT ${tableName}_pk PRIMARY KEY (id), ` +
+          `CONSTRAINT ${tableName}_uk UNIQUE (name)` +
           ')',
       );
       debug.write(
         MessageType.Step,
-        `Loading data into temp table "${table}"...`,
+        `Loading data into temp table "${tableName}"...`,
       );
       await query(
-        `INSERT INTO ${table} (name, description) VALUES ` +
+        `INSERT INTO ${tableName} (name, description) VALUES ` +
           "('varchar', 'variable-length with limit'), " +
           "('text', 'variable unlimited length'), " +
           "('smallint', 'small-range integer'), " +
@@ -70,36 +70,38 @@ describe('main', (suiteContext) => {
           "('boolean', 'state of true or false')",
       );
       await query(
-        `UPDATE ${table} SET _varchar = 'n=10' WHERE name = 'varchar'`,
+        `UPDATE ${tableName} SET _varchar = 'n=10' WHERE name = 'varchar'`,
       );
       await query(
-        `UPDATE ${table} SET _text = 'up to 65,535 bytes' WHERE name = 'text'`,
+        `UPDATE ${tableName} SET _text = 'up to 65,535 bytes' WHERE name = 'text'`,
       );
       await query(
-        `UPDATE ${table} SET _smallint = 32767 WHERE name = 'smallint'`,
+        `UPDATE ${tableName} SET _smallint = 32767 WHERE name = 'smallint'`,
       );
       await query(
-        `UPDATE ${table} SET _integer = 2147483647 WHERE name = 'integer'`,
+        `UPDATE ${tableName} SET _integer = 2147483647 WHERE name = 'integer'`,
       );
       await query(
-        `UPDATE ${table} SET _bigint = 9007199254740991 WHERE name = 'bigint'`,
+        `UPDATE ${tableName} SET _bigint = 9007199254740991 WHERE name = 'bigint'`,
       ); // using js MAX_SAFE_INTEGER in lieu of pg max. 9223372036854775807
       await query(
-        `UPDATE ${table} SET _decimal = 99999999.99 WHERE name = 'decimal'`,
+        `UPDATE ${tableName} SET _decimal = 99999999.99 WHERE name = 'decimal'`,
       );
       await query(
-        `UPDATE ${table} SET _date = '1999-01-08' WHERE name = 'date'`,
+        `UPDATE ${tableName} SET _date = '1999-01-08' WHERE name = 'date'`,
       );
       await query(
-        `UPDATE ${table} SET _time = '04:05:06.789' WHERE name = 'time'`,
+        `UPDATE ${tableName} SET _time = '04:05:06.789' WHERE name = 'time'`,
       );
       await query(
-        `UPDATE ${table} SET _timestamp = '1999-01-08T04:05:06.789' WHERE name = 'timestamp'`,
+        `UPDATE ${tableName} SET _timestamp = '1999-01-08T04:05:06.789' WHERE name = 'timestamp'`,
       );
       await query(
-        `UPDATE ${table} SET _timestamptz = '1999-01-08T04:05:06.789' WHERE name = 'timestamptz'`,
+        `UPDATE ${tableName} SET _timestamptz = '1999-01-08T04:05:06.789' WHERE name = 'timestamptz'`,
       );
-      await query(`UPDATE ${table} SET _boolean = true WHERE name = 'boolean'`);
+      await query(
+        `UPDATE ${tableName} SET _boolean = true WHERE name = 'boolean'`,
+      );
     });
     debug.write(MessageType.Step, `Setting type parsers...`);
     types.setTypeParser(types.builtins.INT8, (value) => parseInt(value)); // bigint
@@ -113,8 +115,11 @@ describe('main', (suiteContext) => {
   it('types', async (testContext) => {
     debug = new Debug(`${suiteContext.name}.test.${testContext.name}`);
     debug.write(MessageType.Entry);
-    debug.write(MessageType.Step, `Selecting from temp table "${table}"...`);
-    const result = await query(`SELECT * FROM ${table}`);
+    debug.write(
+      MessageType.Step,
+      `Selecting from temp table "${tableName}"...`,
+    );
+    const result = await query(`SELECT * FROM ${tableName}`);
     debug.write(MessageType.Value, JSON.stringify(result.rows));
     debug.write(MessageType.Exit);
     assert.ok(true);
@@ -122,8 +127,8 @@ describe('main', (suiteContext) => {
   after(async () => {
     debug = new Debug(`${suiteContext.name}.after`);
     debug.write(MessageType.Entry);
-    debug.write(MessageType.Step, `Dropping temp table "${table}"...`);
-    await query(`DROP TABLE ${table}`);
+    debug.write(MessageType.Step, `Dropping temp table "${tableName}"...`);
+    await query(`DROP TABLE ${tableName}`);
     debug.write(MessageType.Step, `Shutting down...`);
     await shutdown();
     debug.write(MessageType.Exit);
