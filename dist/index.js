@@ -23,11 +23,11 @@ const createConnectionPool = (config) => {
 exports.createConnectionPool = createConnectionPool;
 /**
  * Executes a query on the PostgreSQL database.
- * @param text The SQL query to execute.
+ * @param sql The SQL query to execute.
  * @param values The values to use in the query.
  * @returns A promise that resolves with the result of the query.
  */
-const query = (text, values) => __awaiter(void 0, void 0, void 0, function* () { return yield pool.query(text, values); });
+const query = (sql, values) => __awaiter(void 0, void 0, void 0, function* () { return yield pool.query(sql, values); });
 exports.query = query;
 /**
  * Executes a function within a PostgreSQL transaction.
@@ -35,12 +35,14 @@ exports.query = query;
  * The query function takes a SQL query string and optional values as arguments
  * and returns a promise that resolves with the result of the query.
  * Any errors thrown by the callback will cause the transaction to rollback.
+ * @returns A promise that resolves with the result of the query, if the transaction succeeds.
+ * @throws Any errors thrown by the callback will be re-thrown.
  */
 const transaction = (callback) => __awaiter(void 0, void 0, void 0, function* () {
     const client = yield pool.connect();
     try {
         yield client.query('BEGIN');
-        yield callback((text, values) => __awaiter(void 0, void 0, void 0, function* () { return yield client.query(text, values); }));
+        yield callback((sql, values) => __awaiter(void 0, void 0, void 0, function* () { return yield client.query(sql, values); }));
         yield client.query('COMMIT');
     }
     catch (error) {

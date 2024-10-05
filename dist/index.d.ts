@@ -11,10 +11,10 @@ export interface Config {
  * @param config PostgreSQL connection configuration.
  */
 export declare const createConnectionPool: (config: Config) => void;
-export type Query = (text: string, values?: any[]) => Promise<QueryResult>;
+export type Query = (sql: string, values?: (string | number | boolean | null)[]) => Promise<QueryResult>;
 /**
  * Executes a query on the PostgreSQL database.
- * @param text The SQL query to execute.
+ * @param sql The SQL query to execute.
  * @param values The values to use in the query.
  * @returns A promise that resolves with the result of the query.
  */
@@ -25,6 +25,8 @@ export declare const query: Query;
  * The query function takes a SQL query string and optional values as arguments
  * and returns a promise that resolves with the result of the query.
  * Any errors thrown by the callback will cause the transaction to rollback.
+ * @returns A promise that resolves with the result of the query, if the transaction succeeds.
+ * @throws Any errors thrown by the callback will be re-thrown.
  */
 export declare const transaction: (callback: (query: Query) => Promise<void>) => Promise<void>;
 /**
