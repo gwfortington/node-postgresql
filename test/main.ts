@@ -12,7 +12,7 @@ import {
 } from '../dist';
 
 describe('main', (suiteContext) => {
-  Debug.initialise(true);
+  Debug.initialize(true);
   let debug: Debug;
   const tableName = `_test_${Math.random().toString().substring(2)}`;
   before(async () => {
