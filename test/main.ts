@@ -129,7 +129,7 @@ describe('main', (suiteContext) => {
     debug.write(MessageType.Entry);
     debug.write(MessageType.Step, `Dropping temp table "${tableName}"...`);
     await query(`DROP TABLE ${tableName}`);
-    debug.write(MessageType.Step, `Shutting down...`);
+    debug.write(MessageType.Step, `Shutting down connection pool...`);
     await shutdown();
     debug.write(MessageType.Exit);
   });
