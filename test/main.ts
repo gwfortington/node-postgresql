@@ -66,7 +66,7 @@ describe('main', (suiteContext) => {
           "('date', 'date (no time of day)'), " +
           "('time', 'time of day (no date)'), " +
           "('timestamp', 'both date and time (no time zone)'), " +
-          "('timestamp-tz', 'both date and time, with time zone'), " +
+          "('timestamptz', 'both date and time, with time zone'), " +
           "('boolean', 'state of true or false')",
       );
       await query(
@@ -97,7 +97,7 @@ describe('main', (suiteContext) => {
         `UPDATE ${tableName} SET _timestamp = '1999-01-08T04:05:06.789' WHERE name = 'timestamp'`,
       );
       await query(
-        `UPDATE ${tableName} SET _timestamptz = '1999-01-08T04:05:06.789' WHERE name = 'timestamp-tz'`,
+        `UPDATE ${tableName} SET _timestamptz = '1999-01-08T04:05:06.789' WHERE name = 'timestamptz'`,
       );
       await query(
         `UPDATE ${tableName} SET _boolean = true WHERE name = 'boolean'`,
