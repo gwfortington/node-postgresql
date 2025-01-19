@@ -1,7 +1,7 @@
 {
   "name": "node-postgresql",
   "version": "1.0.0",
-  "description": "PostgreSQL database interface",
+  "description": "A simple Node.js application that connects to a PostgreSQL database.",
   "author": "Grant Fortington",
   "private": true,
   "license": "MIT",
