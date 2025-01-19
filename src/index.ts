@@ -12,6 +12,7 @@ let pool: Pool;
 
 /**
  * Creates a PostgreSQL connection pool.
+ *
  * @param config PostgreSQL connection configuration.
  */
 export const createConnectionPool = (config: Config): void => {
@@ -25,6 +26,7 @@ export type Query = (
 
 /**
  * Executes a query on the PostgreSQL database.
+ *
  * @param sql The SQL query to execute.
  * @param values The values to use in the query.
  * @returns A promise that resolves with the result of the query.
@@ -34,6 +36,7 @@ export const query: Query = async (sql, values) =>
 
 /**
  * Executes a function within a PostgreSQL transaction.
+ *
  * @param callback A function that takes a query function as an argument.
  * The query function takes a SQL query string and optional values as arguments
  * and returns a promise that resolves with the result of the query.
@@ -59,6 +62,7 @@ export const transaction = async (
 
 /**
  * Shuts down the PostgreSQL connection pool.
+ *
  * @returns A promise that resolves when the pool is shut down.
  */
 export const shutdown = async (): Promise<void> => {

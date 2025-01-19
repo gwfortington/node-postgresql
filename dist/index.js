@@ -15,6 +15,7 @@ Object.defineProperty(exports, "types", { enumerable: true, get: function () { r
 let pool;
 /**
  * Creates a PostgreSQL connection pool.
+ *
  * @param config PostgreSQL connection configuration.
  */
 const createConnectionPool = (config) => {
@@ -23,6 +24,7 @@ const createConnectionPool = (config) => {
 exports.createConnectionPool = createConnectionPool;
 /**
  * Executes a query on the PostgreSQL database.
+ *
  * @param sql The SQL query to execute.
  * @param values The values to use in the query.
  * @returns A promise that resolves with the result of the query.
@@ -31,6 +33,7 @@ const query = (sql, values) => __awaiter(void 0, void 0, void 0, function* () { 
 exports.query = query;
 /**
  * Executes a function within a PostgreSQL transaction.
+ *
  * @param callback A function that takes a query function as an argument.
  * The query function takes a SQL query string and optional values as arguments
  * and returns a promise that resolves with the result of the query.
@@ -56,6 +59,7 @@ const transaction = (callback) => __awaiter(void 0, void 0, void 0, function* ()
 exports.transaction = transaction;
 /**
  * Shuts down the PostgreSQL connection pool.
+ *
  * @returns A promise that resolves when the pool is shut down.
  */
 const shutdown = () => __awaiter(void 0, void 0, void 0, function* () {
